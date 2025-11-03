@@ -20,7 +20,7 @@ return {
 			return info("No file selected")
 		end
 
-		local output, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg("jonashahn1@gmx.net"):arg(hovered):arg("--encrypt"):arg(hovered .. ".gpg"):output()
+		local output, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg("jonashahn1@gmx.net"):arg("--output"):arg(hovered .. ".gpg"):arg("--encrypt"):arg(hovered):output()
 		if not output then
 			return info("Failed to gpg diff, error: " .. err)
 		end
