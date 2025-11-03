@@ -15,34 +15,18 @@ return {
 	entry = function()
 		ya.emit("escape", { visual = true })
 
-		ya.notify{title = "NOTI", content = "okay", level =  "info"}
-
 		local urls = selected_or_hovered()
 		if #urls == 0 then
-			return ya.notify { title = "GPG Encrypt", content = "No file selected", level = "warn", timeout = 5 }
+			return ya.notify { title = "Gpg", content = "No file selected", level = "warn", timeout = 5 }
 		end
-
-
-		ya.notify{title = "NOTI", content = "okay", level =  "info"}
-		for _, file_path in ipairs(urls) do
-			local gpg_file = file_path .. ".gpg"
-			ya.notify{title = "NOTI", content = file_path, level =  "info"}
-			local status, err = Command("gpg"):arg("--yes"):arg("--batch"):arg("--recipient"):arg("jonashahn1@gmx.net")
-			:arg(gpg_file):arg("--encrypt"):arg(file_path):spawn():wait()
-
-			if not status or not status.success then
-				ya.notify {
-					title = "GPG Encrypt",
-					content = string.format("Encryption failed for %s: %s", file_path, status and status.code or err),
-					level = "error",
-					timeout = 5,
-				}
-			else
-				os.remove(file_path)
-			end
+		local status, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg("jonashahn1@gmx.net"):arg(urls[1]):arg("--encrypt"):arg(urls[1] .. ".gpg"):spawn():wait()
+		if not status or not status.success then
+			ya.notify {
+				title = "Chmod",
+				content = string.format("Chmod on selected files failed, error: %s", status and status.code or err),
+				level = "error",
+				timeout = 5,
+			}
 		end
-
-		ya.refresh()
-		ya.notify { title = "GPG Encrypt", content = "Encryption complete", level = "info", timeout = 3 }
 	end,
 }
