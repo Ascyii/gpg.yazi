@@ -19,7 +19,7 @@ end)
 
 return {
 	setup = function(state, options)
-		state.delete = options.path or true
+		state.delete = options.delete or true
 		state.default = options.default
 	end,
 	entry = function()
