@@ -1,21 +1,33 @@
---- @since 25.5.31
+--- @since 25.2.7
 
-local selected_or_hovered = ya.sync(function()
-	local tab, paths = cx.active, {}
-	for _, u in pairs(tab.selected) do
-		paths[#paths + 1] = tostring(u)
-	end
-	if #paths == 0 and tab.current.hovered then
-		paths[1] = tostring(tab.current.hovered.url)
-	end
-	return paths
+local function info(content)
+	return ya.notify {
+		title = "Gpg",
+		content = content,
+		timeout = 5,
+	}
+end
+
+local hovered_url = ya.sync(function()
+	local h = cx.active.current.hovered
+	return h and h.url
 end)
 
 return {
 	entry = function()
-		ya.emit("escape", { visual = true })
+		local hovered =  hovered_url()
+		if not hovered then
+			return info("No file selected")
+		end
 
-		return ya.notify { title = "Gpg", content = "No file selected", level = "warn", timeout = 5 }
+		local output, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg("jonashahn1@gmx.net"):arg(hovered):arg("--encrypt"):arg(hovered .. ".gpg"):output()
+		if not output then
+			return info("Failed to gpg diff, error: " .. err)
+		end
 
+		info("Done!")
+
+		ya.clipboard(output.stdout)
+		info("Diff copied to clipboard")
 	end,
 }
