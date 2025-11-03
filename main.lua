@@ -15,6 +15,8 @@ return {
 	entry = function()
 		ya.emit("escape", { visual = true })
 
+		return ya.notify { title = "Gpg", content = "No file selected", level = "warn", timeout = 5 }
+
 		local urls = selected_or_hovered()
 		if #urls == 0 then
 			return ya.notify { title = "Gpg", content = "No file selected", level = "warn", timeout = 5 }
