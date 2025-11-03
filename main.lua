@@ -15,7 +15,6 @@ return {
 	entry = function()
 		ya.emit("escape", { visual = true })
 
-
 		ya.notify{title = "NOTI", content = "okay", level =  "info"}
 
 		local urls = selected_or_hovered()
