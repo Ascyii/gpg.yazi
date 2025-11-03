@@ -24,7 +24,7 @@ return {
 	end,
 	entry = function()
 		local delete_after, default_recipient = get_state_attr("delete_after"), get_state_attr("default_recipient")
-		local hovered =  hovered_url()
+		local hovered = tostring(hovered_url())
 		if not hovered then
 			return info("No file selected")
 		end
@@ -33,7 +33,7 @@ return {
 			return info("No recipient set")
 		end
 
-		local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default_recipient):arg("--output"):arg(tostring(hovered) .. ".gpg"):arg("--encrypt"):arg(tostring(hovered)):output()
+		local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default_recipient):arg("--output"):arg(hovered .. ".gpg"):arg("--encrypt"):arg(hovered):output()
 		if err then
 			return info("Failed to gpg with error: " .. err)
 		end
