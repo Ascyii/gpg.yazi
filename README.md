@@ -8,8 +8,8 @@ Setup in `init.lua` with
 
 ```lua
 require("gpg"):setup {
-  default = "username@example.com",
-  delete = true,
+  default_recipient = "username@example.com",
+  delete_after = true,
 }
 ```
 

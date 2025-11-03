@@ -19,27 +19,27 @@ end)
 
 return {
 	setup = function(state, options)
-		state.delete = options.delete or true
-		state.default = options.default
+		state.delete_after = options.delete_after or true
+		state.default_recipient = options.default_recipient
 	end,
 	entry = function()
-		local delete, default = get_state_attr("delete"), get_state_attr("default")
+		local delete_after, default_recipient = get_state_attr("delete_after"), get_state_attr("default_recipient")
 		local hovered =  hovered_url()
 		if not hovered then
 			return info("No file selected")
 		end
 
-		if not default then
+		if not default_recipient then
 			return info("No recipient set")
 		end
 
-		local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default):arg("--output"):arg(tostring(hovered) .. ".gpg"):arg("--encrypt"):arg(tostring(hovered)):output()
+		local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default_recipient):arg("--output"):arg(tostring(hovered) .. ".gpg"):arg("--encrypt"):arg(tostring(hovered)):output()
 		if err then
 			return info("Failed to gpg with error: " .. err)
 		end
 
 		-- Delete the plain file
-		if delete == true then
+		if delete_after == true then
 			os.remove(hovered)
 		end
 
