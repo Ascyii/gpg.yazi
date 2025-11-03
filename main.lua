@@ -17,18 +17,5 @@ return {
 
 		return ya.notify { title = "Gpg", content = "No file selected", level = "warn", timeout = 5 }
 
-		local urls = selected_or_hovered()
-		if #urls == 0 then
-			return ya.notify { title = "Gpg", content = "No file selected", level = "warn", timeout = 5 }
-		end
-		local status, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg("jonashahn1@gmx.net"):arg(urls[1]):arg("--encrypt"):arg(urls[1] .. ".gpg"):spawn():wait()
-		if not status or not status.success then
-			ya.notify {
-				title = "Chmod",
-				content = string.format("Chmod on selected files failed, error: %s", status and status.code or err),
-				level = "error",
-				timeout = 5,
-			}
-		end
 	end,
 }
