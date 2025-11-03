@@ -2,7 +2,7 @@
 
 local function info(content)
 	return ya.notify {
-		title = "Gpg",
+		title = "Gpg information",
 		content = content,
 		timeout = 5,
 	}
@@ -13,23 +13,36 @@ local hovered_url = ya.sync(function()
 	return h and h.url
 end)
 
+local get_state_attr = ya.sync(function(state, attr)
+  return state[attr]
+end)
+
 return {
+	setup = function(state, options)
+		state.delete = options.path or true
+		state.default = options.default
+	end,
 	entry = function()
+		local delete, default = get_state_attr("delete"), get_state_attr("default")
 		local hovered =  hovered_url()
 		if not hovered then
 			return info("No file selected")
 		end
 
-		info(tostring(hovered))
-
-		local output, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg("jonashahn1@gmx.net"):arg("--output"):arg(tostring(hovered) .. ".gpg"):arg("--encrypt"):arg(tostring(hovered)):output()
-		if not output then
-			return info("Failed to gpg diff, error: " .. err)
+		if not default then
+			return info("No recipient set")
 		end
 
-		info("Done!")
+		local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default):arg("--output"):arg(tostring(hovered) .. ".gpg"):arg("--encrypt"):arg(tostring(hovered)):output()
+		if err then
+			return info("Failed to gpg with error: " .. err)
+		end
 
-		ya.clipboard(output.stdout)
-		info("Diff copied to clipboard")
+		-- Delete the plain file
+		if delete == true then
+			os.remove(hovered)
+		end
+
+		info("Done encrypting the file! The plain one is deleted now.")
 	end,
 }
