@@ -29,18 +29,23 @@ return {
             return info("No file selected")
         end
 
-        if hovered:match("%.gpg$") then
-            return info("This file is already encrypted")
-        end
-
         if not default_recipient then
             return info("No recipient set")
         end
 
-        local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default_recipient):arg("--output"):arg(hovered ..
-        ".gpg"):arg("--encrypt"):arg(hovered):output()
-        if err then
-            return info("Failed to gpg with error: " .. err)
+        if hovered:match("%.gpg$") then
+            local plain_hovered = hovered:gsub("%.gpg$", "")
+            local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default_recipient):arg("--output"):arg(plain_hovered):arg("--decrypt"):arg(hovered):output()
+            if err then
+                return info("Failed to gpg with error: " .. err)
+            end
+        else
+            local _, err = Command("gpg"):arg("--yes"):arg("--recipient"):arg(default_recipient):arg("--output"):arg(hovered ..
+            ".gpg"):arg("--encrypt"):arg(hovered):output()
+            if err then
+                return info("Failed to gpg with error: " .. err)
+            end
+        
         end
 
         -- Delete the plain file
@@ -48,6 +53,6 @@ return {
             os.remove(hovered)
         end
 
-        info("Done encrypting the file! The plain one is deleted now.")
+        info("Done encrypting/decrypting the file! The plain one is deleted now.")
     end,
 }
